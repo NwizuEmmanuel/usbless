@@ -12,13 +12,19 @@
         <button type="submit" name="upload">Upload</button>
     </form>
     <?php
+        // Create uploads folder if it doesn't exist
+        $dir = 'uploads';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
         if (isset($_POST['upload'])){
             if (isset($_FILES['myfile'])) {
                 $fileCount = count($_FILES['myfile']['name']);
                 $success = 0;
                 for ($i = 0; $i < $fileCount; $i++) {
                     if ($_FILES['myfile']['error'][$i] == 0) {
-                        $target = "uploads/" . basename($_FILES['myfile']['name'][$i]);
+                        $target = $dir . "/" . basename($_FILES['myfile']['name'][$i]);
                         if (move_uploaded_file($_FILES['myfile']['tmp_name'][$i], $target)) {
                             $success++;
                         }
@@ -35,7 +41,6 @@
         }
 
         // List files in uploads directory
-        $dir = 'uploads';
         if (is_dir($dir)){
             $files = array_diff(scandir($dir), array('.', '..'));
             if (count($files) > 0){
